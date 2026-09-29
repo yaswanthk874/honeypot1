@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"     # API
+      - "8080:8080"     # Fake HTTP
+      - "2222:2222"     # Fake SSH
+      - "33060:33060"   # Fake MySQL
+    volumes:
+      - ./backend/honeypot.db:/app/honeypot.db
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
